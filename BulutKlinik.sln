@@ -1,14 +1,23 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.API", "BulutKlinik.API/BulutKlinik.API.csproj", "{A1B2C3D4-0001-0001-0001-000000000001}"
+# 
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.API", "BulutKlinik.API\BulutKlinik.API.csproj", "{A1B2C3D4-0001-0001-0001-000000000001}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.Core", "BulutKlinik.Core/BulutKlinik.Core.csproj", "{A1B2C3D4-0002-0002-0002-000000000002}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.Core", "BulutKlinik.Core\BulutKlinik.Core.csproj", "{A1B2C3D4-0002-0002-0002-000000000002}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.Infrastructure", "BulutKlinik.Infrastructure/BulutKlinik.Infrastructure.csproj", "{A1B2C3D4-0003-0003-0003-000000000003}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.Infrastructure", "BulutKlinik.Infrastructure\BulutKlinik.Infrastructure.csproj", "{A1B2C3D4-0003-0003-0003-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulutKlinik.Tests", "BulutKlinik.Tests\BulutKlinik.Tests.csproj", "{E0A12315-2B48-4B04-8D70-B07BE594C7F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0A12315-2B48-4B04-8D70-B07BE594C7F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0A12315-2B48-4B04-8D70-B07BE594C7F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0A12315-2B48-4B04-8D70-B07BE594C7F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0A12315-2B48-4B04-8D70-B07BE594C7F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
