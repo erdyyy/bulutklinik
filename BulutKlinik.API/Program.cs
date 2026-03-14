@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+// Sprint kayıt using'leri — servisler BulutKlinik.Infrastructure.Services namespace'inde
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ── PostgreSQL ────────────────────────────────────────────────────
@@ -44,6 +46,11 @@ builder.Services.AddScoped<IAuthService,          AuthService>();
 builder.Services.AddScoped<IScheduleService,      ScheduleService>();
 builder.Services.AddScoped<ISlotGeneratorService, SlotGeneratorService>();
 builder.Services.AddScoped<IAppointmentService,   AppointmentService>();
+builder.Services.AddScoped<IMedicalService,       MedicalService>();
+builder.Services.AddScoped<IFinancialService,     FinancialService>();
+builder.Services.AddScoped<IStockService,         StockService>();
+builder.Services.AddScoped<INotificationService,  NotificationService>();
+builder.Services.AddScoped<IDashboardService,     DashboardService>();
 
 // ── Controllers ───────────────────────────────────────────────────
 builder.Services.AddControllers()
