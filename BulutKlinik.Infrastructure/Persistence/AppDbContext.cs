@@ -11,6 +11,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<DoctorLeave> DoctorLeaves => Set<DoctorLeave>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
 
+    // Sprint 3 - Medikal Takip
+    public DbSet<PatientHistory> PatientHistories => Set<PatientHistory>();
+    public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
+    public DbSet<Measurement> Measurements => Set<Measurement>();
+
+    // Sprint 4 - Finansal
+    public DbSet<Service> Services => Set<Service>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
+    public DbSet<InvoiceItem> InvoiceItems => Set<InvoiceItem>();
+    public DbSet<Payment> Payments => Set<Payment>();
+
+    // Sprint 5 - Doküman + Stok
+    public DbSet<Document> Documents => Set<Document>();
+    public DbSet<StockItem> StockItems => Set<StockItem>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+
+    // Sprint 6 - Bildirim
+    public DbSet<NotificationLog> NotificationLogs => Set<NotificationLog>();
+
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<User>(e =>
@@ -50,6 +69,67 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasIndex(l => new { l.DoctorId, l.LeaveDate })
              .HasFilter("\"IsFullDay\" = true")
              .IsUnique();
+        });
+
+        mb.Entity<PatientHistory>(e =>
+        {
+            e.HasIndex(p => p.PatientId).IsUnique();
+        });
+
+        mb.Entity<MedicalRecord>(e =>
+        {
+            e.Property(m => m.CreatedAt).HasDefaultValueSql("NOW()");
+        });
+
+        mb.Entity<Measurement>(e =>
+        {
+            e.Property(m => m.Type).HasConversion<string>();
+        });
+
+        mb.Entity<Service>(e =>
+        {
+            e.Property(s => s.Category).HasConversion<string>();
+            e.Property(s => s.Price).HasColumnType("decimal(18,2)");
+        });
+
+        mb.Entity<Invoice>(e =>
+        {
+            e.Property(i => i.Status).HasConversion<string>();
+            e.Property(i => i.SubTotal).HasColumnType("decimal(18,2)");
+            e.Property(i => i.DiscountAmount).HasColumnType("decimal(18,2)");
+            e.Property(i => i.TotalAmount).HasColumnType("decimal(18,2)");
+        });
+
+        mb.Entity<InvoiceItem>(e =>
+        {
+            e.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
+            e.Property(i => i.TotalPrice).HasColumnType("decimal(18,2)");
+        });
+
+        mb.Entity<Payment>(e =>
+        {
+            e.Property(p => p.Method).HasConversion<string>();
+            e.Property(p => p.Amount).HasColumnType("decimal(18,2)");
+        });
+
+        mb.Entity<Document>(e =>
+        {
+            e.Property(d => d.Category).HasConversion<string>();
+        });
+
+        mb.Entity<StockItem>(e =>
+        {
+            e.Property(s => s.UnitCost).HasColumnType("decimal(18,2)");
+        });
+
+        mb.Entity<StockMovement>(e =>
+        {
+            e.Property(s => s.Type).HasConversion<string>();
+        });
+
+        mb.Entity<NotificationLog>(e =>
+        {
+            e.Property(n => n.Channel).HasConversion<string>();
         });
     }
 }
