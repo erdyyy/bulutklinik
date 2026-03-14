@@ -131,6 +131,7 @@ public class AppointmentService(AppDbContext db, ISlotGeneratorService slotGener
         a.DoctorId,
         a.Doctor?.FullName ?? string.Empty,
         a.PatientId,
+        a.Patient?.Email ?? string.Empty,
         a.AppointmentDate,
         a.StartTime,
         a.EndTime,

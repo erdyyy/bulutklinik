@@ -20,7 +20,10 @@ export default function Navbar() {
           {role === 'Doctor' && (
             <>
               <Link to="/doctor/dashboard" className="hover:underline">Dashboard</Link>
+              <Link to="/doctor/patients" className="hover:underline">Hastalar</Link>
               <Link to="/doctor/calendar" className="hover:underline">Takvim</Link>
+              <Link to="/doctor/invoices" className="hover:underline">Faturalar</Link>
+              <Link to="/doctor/stock" className="hover:underline">Stok</Link>
               <Link to="/doctor/schedule" className="hover:underline">Çalışma Saatleri</Link>
             </>
           )}
@@ -28,6 +31,8 @@ export default function Navbar() {
             <>
               <Link to="/book" className="hover:underline">Randevu Al</Link>
               <Link to="/my-appointments" className="hover:underline">Randevularım</Link>
+              <Link to="/my-records" className="hover:underline">Muayene Geçmişim</Link>
+              <Link to="/my-measurements" className="hover:underline">Ölçümlerim</Link>
             </>
           )}
           <button

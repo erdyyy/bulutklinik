@@ -5,9 +5,15 @@ import ProtectedRoute from './components/shared/ProtectedRoute'
 import LoginPage            from './pages/auth/LoginPage'
 import MyAppointmentsPage   from './pages/patient/MyAppointmentsPage'
 import BookAppointmentPage  from './pages/patient/BookAppointmentPage'
+import MyRecordsPage        from './pages/patient/MyRecordsPage'
+import MyMeasurementsPage   from './pages/patient/MyMeasurementsPage'
 import DashboardPage        from './pages/doctor/DashboardPage'
 import CalendarPage         from './pages/doctor/CalendarPage'
 import SchedulePage         from './pages/doctor/SchedulePage'
+import PatientListPage      from './pages/doctor/PatientListPage'
+import PatientDetailPage    from './pages/doctor/PatientDetailPage'
+import InvoicesPage         from './pages/doctor/InvoicesPage'
+import StockPage            from './pages/doctor/StockPage'
 
 function HomeRedirect() {
   const { role, token } = useAuthStore()
@@ -29,6 +35,12 @@ export default function App() {
         <Route path="/book" element={
           <ProtectedRoute role="Patient"><BookAppointmentPage /></ProtectedRoute>
         } />
+        <Route path="/my-records" element={
+          <ProtectedRoute role="Patient"><MyRecordsPage /></ProtectedRoute>
+        } />
+        <Route path="/my-measurements" element={
+          <ProtectedRoute role="Patient"><MyMeasurementsPage /></ProtectedRoute>
+        } />
 
         {/* Doktor */}
         <Route path="/doctor/dashboard" element={
@@ -39,6 +51,18 @@ export default function App() {
         } />
         <Route path="/doctor/schedule" element={
           <ProtectedRoute role="Doctor"><SchedulePage /></ProtectedRoute>
+        } />
+        <Route path="/doctor/patients" element={
+          <ProtectedRoute role="Doctor"><PatientListPage /></ProtectedRoute>
+        } />
+        <Route path="/doctor/patients/:patientId" element={
+          <ProtectedRoute role="Doctor"><PatientDetailPage /></ProtectedRoute>
+        } />
+        <Route path="/doctor/invoices" element={
+          <ProtectedRoute role="Doctor"><InvoicesPage /></ProtectedRoute>
+        } />
+        <Route path="/doctor/stock" element={
+          <ProtectedRoute role="Doctor"><StockPage /></ProtectedRoute>
         } />
 
         <Route path="*" element={<Navigate to="/" replace />} />

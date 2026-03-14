@@ -25,6 +25,7 @@ public record AppointmentResponse(
     Guid DoctorId,
     string DoctorName,
     Guid PatientId,
+    string PatientEmail,
     DateOnly AppointmentDate,
     TimeOnly StartTime,
     TimeOnly EndTime,
