@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BulutKlinik.Infrastructure.Services;
 
-public class AppointmentService(AppDbContext db, ISlotGeneratorService slotGenerator) : IAppointmentService
+public class AppointmentService(
+    AppDbContext db,
+    ISlotGeneratorService slotGenerator,
+    INotificationService notificationService) : IAppointmentService
 {
     public Task<AvailableSlotsResponse> GetAvailableSlotsAsync(Guid doctorId, DateOnly date)
         => slotGenerator.GetAvailableSlotsAsync(doctorId, date);
@@ -54,6 +57,10 @@ public class AppointmentService(AppDbContext db, ISlotGeneratorService slotGener
             // Navigation property'leri yükle
             await db.Entry(appointment).Reference(a => a.Doctor).LoadAsync();
             await db.Entry(appointment).Reference(a => a.Patient).LoadAsync();
+
+            // Sprint 6: Randevu bildirimi logla
+            _ = notificationService.LogAppointmentCreatedAsync(
+                patientId, appointment.Id, appointment.Patient?.Email ?? "");
 
             return ToResponse(appointment);
         }
