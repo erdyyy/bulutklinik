@@ -1,5 +1,7 @@
 using System.Text;
 using BulutKlinik.API.Middleware;
+using BulutKlinik.Core.DTOs.Auth;
+using BulutKlinik.Core.Entities;
 using BulutKlinik.Core.Interfaces;
 using BulutKlinik.Infrastructure.Persistence;
 using BulutKlinik.Infrastructure.Services;
@@ -113,11 +115,43 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// ── Migration otomatik uygula (dev) ──────────────────────────────
+// ── Migration + Seed ────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var db   = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var auth = scope.ServiceProvider.GetRequiredService<IAuthService>();
+
     await db.Database.MigrateAsync();
+
+    // Test Doktor
+    if (!await db.Users.AnyAsync(u => u.Email == "doktor@bulutklinik.com"))
+    {
+        var res = await auth.RegisterAsync(new RegisterRequest(
+            Email:       "doktor@bulutklinik.com",
+            Password:    "Test1234",
+            PhoneNumber: "05001234567",
+            Role:        "Doctor"
+        ));
+        db.Doctors.Add(new Doctor
+        {
+            Id        = res.UserId,
+            FullName  = "Dr. Ahmet Yılmaz",
+            Title     = "Uzm. Dr.",
+            Specialty = "Estetik ve Plastik Cerrahi",
+        });
+        await db.SaveChangesAsync();
+    }
+
+    // Test Hasta
+    if (!await db.Users.AnyAsync(u => u.Email == "hasta@bulutklinik.com"))
+    {
+        await auth.RegisterAsync(new RegisterRequest(
+            Email:       "hasta@bulutklinik.com",
+            Password:    "Test1234",
+            PhoneNumber: "05009876543",
+            Role:        "Patient"
+        ));
+    }
 }
 
 app.Run();
