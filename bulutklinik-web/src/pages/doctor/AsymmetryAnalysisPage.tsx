@@ -40,6 +40,119 @@ import {
   sessionsForPatient,
 } from "../../services/sessionStore";
 
+// ─── Adım göstergesi ─────────────────────────────────────────────────────── //
+
+const STEPS = [
+  { key: "upload",    label: "Fotoğraf",  icon: "📸" },
+  { key: "analyzing", label: "Analiz",    icon: "🔬" },
+  { key: "results",   label: "Sonuçlar",  icon: "📊" },
+  { key: "ai-report", label: "AI Rapor",  icon: "✨" },
+] as const;
+
+type StepKey = typeof STEPS[number]["key"];
+
+const StepProgress: React.FC<{ step: StepKey }> = ({ step }) => {
+  const currentIdx = STEPS.findIndex(s => s.key === step);
+  return (
+    <div className="flex items-center gap-0 mb-6 px-1">
+      {STEPS.map((s, i) => {
+        const done    = i < currentIdx;
+        const active  = i === currentIdx;
+        const pending = i > currentIdx;
+        return (
+          <React.Fragment key={s.key}>
+            <div className="flex flex-col items-center gap-1 min-w-0">
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-bold border-2 transition-all duration-300
+                  ${done    ? "bg-indigo-600 border-indigo-500 text-white"    : ""}
+                  ${active  ? "bg-indigo-500 border-indigo-400 text-white ring-2 ring-indigo-400/40 scale-110" : ""}
+                  ${pending ? "bg-gray-800 border-gray-700 text-gray-600" : ""}
+                `}
+              >
+                {done ? "✓" : s.icon}
+              </div>
+              <span className={`text-[10px] font-medium hidden sm:block transition-colors
+                ${active  ? "text-indigo-300" : done ? "text-indigo-500" : "text-gray-600"}`}>
+                {s.label}
+              </span>
+            </div>
+            {i < STEPS.length - 1 && (
+              <div className={`flex-1 h-0.5 mx-1 mb-5 rounded-full transition-all duration-500
+                ${i < currentIdx ? "bg-indigo-600" : "bg-gray-700"}`} />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+};
+
+// ─── Skor hero kartları ───────────────────────────────────────────────────── //
+
+const ScoreHeroCards: React.FC<{ result: AsymmetryResult }> = ({ result }) => {
+  const cards = [
+    {
+      label: "Simetri Skoru",
+      value: result.symmetry_score.toFixed(1),
+      unit: "/ 100",
+      color: result.symmetry_score >= 85 ? "emerald" : result.symmetry_score >= 65 ? "yellow" : "red",
+      icon: "⬡",
+      desc: result.symmetry_score >= 85 ? "Yüksek simetri" : result.symmetry_score >= 65 ? "Orta simetri" : "Düşük simetri",
+    },
+    {
+      label: "Kaş Farkı",
+      value: Math.abs(result.eyebrow_delta_mm).toFixed(1),
+      unit: "mm",
+      color: Math.abs(result.eyebrow_delta_mm) < 0.5 ? "emerald" : Math.abs(result.eyebrow_delta_mm) < 1.5 ? "yellow" : "red",
+      icon: "╌",
+      desc: result.eyebrow_delta_mm > 0 ? "Sol kaş yüksek" : "Sağ kaş yüksek",
+    },
+    {
+      label: "Göz Farkı",
+      value: Math.abs(result.eye_delta_mm).toFixed(1),
+      unit: "mm",
+      color: Math.abs(result.eye_delta_mm) < 0.5 ? "emerald" : Math.abs(result.eye_delta_mm) < 1.5 ? "yellow" : "red",
+      icon: "◎",
+      desc: result.eye_delta_mm > 0 ? "Sol göz açık" : "Sağ göz açık",
+    },
+    {
+      label: "Dudak Farkı",
+      value: Math.abs(result.lip_delta_mm).toFixed(1),
+      unit: "mm",
+      color: Math.abs(result.lip_delta_mm) < 0.5 ? "emerald" : Math.abs(result.lip_delta_mm) < 1.5 ? "yellow" : "red",
+      icon: "⌢",
+      desc: result.lip_delta_mm > 0 ? "Sol köşe yukarı" : "Sağ köşe yukarı",
+    },
+  ] as const;
+
+  const colorMap = {
+    emerald: { bg: "bg-emerald-900/30", border: "border-emerald-700/50", text: "text-emerald-400", badge: "bg-emerald-900/50 text-emerald-300" },
+    yellow:  { bg: "bg-yellow-900/30",  border: "border-yellow-700/50",  text: "text-yellow-400",  badge: "bg-yellow-900/50  text-yellow-300"  },
+    red:     { bg: "bg-red-900/30",     border: "border-red-700/50",     text: "text-red-400",     badge: "bg-red-900/50     text-red-300"     },
+  };
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+      {cards.map((c) => {
+        const cm = colorMap[c.color];
+        return (
+          <div key={c.label} className={`rounded-xl border p-4 flex flex-col gap-1 ${cm.bg} ${cm.border}`}>
+            <div className="flex items-center justify-between">
+              <span className="text-lg">{c.icon}</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${cm.badge}`}>{c.desc}</span>
+            </div>
+            <div className="flex items-baseline gap-1 mt-1">
+              <span className={`text-2xl font-bold font-mono ${cm.text}`}>{c.value}</span>
+              <span className="text-xs text-gray-500">{c.unit}</span>
+            </div>
+            <span className="text-[11px] text-gray-400">{c.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 // ─── Yardımcı bileşenler ─────────────────────────────────────────────────── //
 
 const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) => {
@@ -1563,6 +1676,9 @@ const AsymmetryAnalysisPage: React.FC = () => {
     >
     <div className="text-gray-100 relative">
 
+      {/* ── Adım göstergesi ── */}
+      <StepProgress step={step} />
+
       {/* ── Kayıt toast ── */}
       <div
         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium pointer-events-none transition-all duration-300"
@@ -1686,13 +1802,23 @@ const AsymmetryAnalysisPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-gray-800/50 rounded-xl p-3.5 text-xs text-gray-400 space-y-2 border border-gray-700/50">
-                <p className="font-medium text-gray-300">📌 Nasıl çalışır?</p>
-                <div className="space-y-1.5">
-                  <p className="flex items-start gap-2"><span className="text-indigo-400 font-mono">1.</span> Frontal + isteğe bağlı profil fotoğraf yükle</p>
-                  <p className="flex items-start gap-2"><span className="text-indigo-400 font-mono">2.</span> MediaPipe 478 yüz noktasını tespit eder</p>
-                  <p className="flex items-start gap-2"><span className="text-indigo-400 font-mono">3.</span> 6 estetik metrik + asimetri ölçülür</p>
-                  <p className="flex items-start gap-2"><span className="text-indigo-400 font-mono">4.</span> AI görsel + veri ile yaşa uygun rapor üretir</p>
+              <div className="bg-gray-800/50 rounded-xl p-3.5 border border-gray-700/50">
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Akış</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { icon: "📸", label: "Fotoğraf Yükle",    desc: "Frontal zorunlu" },
+                    { icon: "🔬", label: "Analiz",             desc: "478 nokta tespiti" },
+                    { icon: "📐", label: "6 Metrik",           desc: "Asimetri ölçümü" },
+                    { icon: "✨", label: "AI Rapor",           desc: "Yaşa özel plan" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-2 bg-gray-900/40 rounded-lg p-2">
+                      <span className="text-base flex-shrink-0">{item.icon}</span>
+                      <div>
+                        <p className="text-[11px] font-semibold text-gray-300">{item.label}</p>
+                        <p className="text-[10px] text-gray-600">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1720,6 +1846,15 @@ const AsymmetryAnalysisPage: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════════ */}
       {(step === "results" || step === "ai-report") && result && (
         <div className="space-y-6">
+
+          {/* ── Özet skor kartları ── */}
+          <ScoreHeroCards result={result} />
+
+          {/* ── Bölüm başlığı: Fotoğraf Analizi ── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Fotoğraf Analizi</span>
+            <div className="flex-1 h-px bg-gray-800" />
+          </div>
 
           {/* ── Fotoğraflar: Frontal (sol) + AI Annotasyon (sağ) — eşit büyüklükte ── */}
           <div className="grid grid-cols-2 gap-3">
@@ -1758,6 +1893,12 @@ const AsymmetryAnalysisPage: React.FC = () => {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* ── Bölüm başlığı: Karşılaştırma ── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Karşılaştırma</span>
+            <div className="flex-1 h-px bg-gray-800" />
           </div>
 
           {/* ── Before / After Karşılaştırma ── */}
@@ -1850,6 +1991,13 @@ const AsymmetryAnalysisPage: React.FC = () => {
             )}
           </div>
 
+          {/* ── Bölüm başlığı: Estetik Metrikler ── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Estetik Metrikler</span>
+            <div className="flex-1 h-px bg-gray-800" />
+            <span className="text-[10px] text-gray-600">6 kategori</span>
+          </div>
+
           {/* ── Estetik Metrikler (altın oran, canthal, şekil…) ── */}
           <AestheticMetricsPanel result={result} />
 
@@ -1913,6 +2061,15 @@ const AsymmetryAnalysisPage: React.FC = () => {
           {/* ════════════════════════════════════════════════════════════════ */}
           {plan && (
             <div className="bg-gray-900 rounded-2xl border border-violet-800/40 overflow-hidden">
+
+              {/* ── Bölüm başlığı: AI Klinik Rapor ── */}
+              <div className="px-6 pt-5 pb-0">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-xs font-semibold text-violet-400/70 uppercase tracking-widest">AI Klinik Rapor</span>
+                  <div className="flex-1 h-px bg-violet-800/30" />
+                  <span className="text-[10px] text-gray-600">{plan.ai_model} · {plan.prompt_tokens + plan.completion_tokens} token</span>
+                </div>
+              </div>
 
               {/* Başlık */}
               <div className="px-6 py-4 bg-violet-900/30 flex items-center justify-between border-b border-violet-800/30">
