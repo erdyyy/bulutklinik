@@ -43,7 +43,7 @@ const MOCK_PATIENT_DATA = {
   saat:       '14:30',
   tarih:      dayjs().format('DD MMMM YYYY'),
   doktorAdı:  'Dr. Ahmet Yılmaz',
-  klinikAdı:  'BulutKlinik',
+  klinikAdı:  'Medica.AI',
   klinikAdres:'Bağcılar Mah. Klinik Cad. No:12, İstanbul',
 }
 
@@ -147,7 +147,7 @@ export default function AutoRemindersPage() {
   const [form, setForm]               = useState<Omit<ReminderRule, 'id'>>(EMPTY_FORM)
   const [previewExpanded, setPreviewExpanded] = useState(false)
 
-  useEffect(() => { document.title = 'Otomatik Hatırlatma – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Otomatik Hatırlatma – Medica.AI' }, [])
   useEffect(() => { saveRules(rules) }, [rules])
 
   const openNew = () => {

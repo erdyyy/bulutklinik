@@ -31,7 +31,7 @@ export interface AnalysisSession {
 
 // ─── IndexedDB ────────────────────────────────────────────────────────────── //
 
-const DB_NAME = "bulutklinik_v1";
+const DB_NAME = "medicaai_v1";
 const STORE   = "sessions";
 const DB_VER  = 1;
 

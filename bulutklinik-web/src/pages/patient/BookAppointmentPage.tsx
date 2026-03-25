@@ -18,7 +18,7 @@ export default function BookAppointmentPage() {
   const [searchParams] = useSearchParams()
   const preselectedId = searchParams.get('doctorId')
 
-  useEffect(() => { document.title = 'Randevu Al – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Randevu Al – Medica.AI' }, [])
 
   const [step, setStep] = useState<1 | 2 | 3>(preselectedId ? 2 : 1)
   const [selectedDoctorId, setSelectedDoctorId] = useState(preselectedId ?? '')

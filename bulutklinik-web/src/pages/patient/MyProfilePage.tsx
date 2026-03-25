@@ -10,7 +10,7 @@ export default function MyProfilePage() {
   const [saved, setSaved] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  useEffect(() => { document.title = 'Profilim – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Profilim – Medica.AI' }, [])
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['my-profile'],

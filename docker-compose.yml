@@ -3,9 +3,9 @@ version: '3.9'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: bulutklinik_db
+    container_name: medicaai_db
     environment:
-      POSTGRES_DB:       bulutklinik_dev
+      POSTGRES_DB:       medicaai_dev
       POSTGRES_USER:     postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -21,16 +21,16 @@ services:
   api:
     build:
       context: .
-      dockerfile: BulutKlinik.API/Dockerfile
-    container_name: bulutklinik_api
+      dockerfile: MedicaAI.API/Dockerfile
+    container_name: medicaai_api
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT:          Development
       ASPNETCORE_URLS:                 http://+:8080
-      ConnectionStrings__Default:      Host=postgres;Port=5432;Database=bulutklinik_dev;Username=postgres;Password=postgres
-      Jwt__Key:                        BulutKlinik_Super_Secret_Key_Min32Chars_CHANGE_IN_PROD!!
+      ConnectionStrings__Default:      Host=postgres;Port=5432;Database=medicaai_dev;Username=postgres;Password=postgres
+      Jwt__Key:                        MedicaAI_Super_Secret_Key_Min32Chars_CHANGE_IN_PROD!!
       Jwt__Issuer:                     http://localhost:8080
       Jwt__ExpiresInMinutes:           "60"
     ports:

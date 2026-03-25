@@ -54,7 +54,7 @@ const KVKK_TEXT = `6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") k
 const MEDICAL_CONSENT_TEXT = (treatment: string) =>
   `${treatment} prosedürünün olası risk ve komplikasyonları (geçici şişlik, morluk, asimetri, enfeksiyon, alerjik reaksiyon vb.) hakkında bilgilendirildim. Alternatifleri değerlendirdim ve bu işlemi kendi özgür iradem ile yaptırmayı kabul ediyorum. İşlem öncesi, esnasında ve sonrasında doktor talimatlarına uyacağımı taahhüt ederim.`
 
-const DISCLAIMER_TEXT = `Bu sistem tarafından üretilen AI analiz raporları, lisanslı bir hekimin değerlendirmesinin yerini alamaz. Raporlar yalnızca klinik karar desteği amacıyla üretilmekte olup kesin tanı veya tedavi önerisi niteliği taşımamaktadır. Hastanın bireysel anatomisi, tıbbi öyküsü ve hekim muayenesi her zaman önceliklidir. BulutKlinik ve yazılım geliştiricileri, AI raporlarının klinik uygulamaya yansımasından doğabilecek sonuçlardan sorumlu tutulamaz.`
+const DISCLAIMER_TEXT = `Bu sistem tarafından üretilen AI analiz raporları, lisanslı bir hekimin değerlendirmesinin yerini alamaz. Raporlar yalnızca klinik karar desteği amacıyla üretilmekte olup kesin tanı veya tedavi önerisi niteliği taşımamaktadır. Hastanın bireysel anatomisi, tıbbi öyküsü ve hekim muayenesi her zaman önceliklidir. Medica.AI ve yazılım geliştiricileri, AI raporlarının klinik uygulamaya yansımasından doğabilecek sonuçlardan sorumlu tutulamaz.`
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -90,7 +90,7 @@ function printConsent(r: ConsentRecord) {
       .sig{margin-top:40px;border-top:1px dashed #9ca3af;padding-top:12px}
       @media print{button{display:none}}
     </style></head><body>
-    <h1>🏥 BulutKlinik — Hasta Açık Rıza & KVKK Formu</h1>
+    <h1>🏥 Medica.AI — Hasta Açık Rıza & KVKK Formu</h1>
     <div class="meta">
       <span><b>Hasta:</b> ${r.patientName}</span>
       <span><b>Telefon:</b> ${r.patientPhone}</span>
@@ -116,7 +116,7 @@ function printConsent(r: ConsentRecord) {
       <p><b>IP Adresi:</b> ${r.ipAddress}</p>
       <p><b>Sorumlu Hekim:</b> ${r.doctorName}</p>
       <p style="font-size:11px;color:#9ca3af;margin-top:16px">
-        Bu form BulutKlinik sistemi tarafından elektronik olarak oluşturulmuş olup dijital imza değerinde kabul edilir.
+        Bu form Medica.AI sistemi tarafından elektronik olarak oluşturulmuş olup dijital imza değerinde kabul edilir.
         Form ID: ${r.id}
       </p>
     </div>

@@ -20,7 +20,7 @@ export default function CalendarPage() {
   const qc = useQueryClient()
   const [weekStart, setWeekStart] = useState(dayjs().startOf('week').add(1, 'day'))
 
-  useEffect(() => { document.title = 'Takvim – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Takvim – Medica.AI' }, [])
 
   const { data: apts = [], isLoading } = useQuery({
     queryKey: ['doctor-appointments', userId],

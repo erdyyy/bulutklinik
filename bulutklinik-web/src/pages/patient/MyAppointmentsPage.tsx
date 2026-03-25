@@ -124,7 +124,7 @@ export default function MyAppointmentsPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>('upcoming')
   const [reviewApt, setReviewApt] = useState<any | null>(null)
 
-  useEffect(() => { document.title = 'Randevularım – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Randevularım – Medica.AI' }, [])
 
   const { data = [], isLoading } = useQuery({
     queryKey: ['my-appointments'],

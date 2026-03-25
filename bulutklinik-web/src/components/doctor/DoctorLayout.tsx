@@ -84,7 +84,7 @@ export default function DoctorLayout({ children, title, action }: Props) {
               <Stethoscope className="w-5 h-5 text-white" strokeWidth={2} />
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-sm leading-none">BulutKlinik</p>
+              <p className="font-bold text-gray-900 text-sm leading-none">Medica.AI</p>
               <p className="text-[11px] text-gray-400 mt-0.5">Klinik Paneli</p>
             </div>
           </Link>

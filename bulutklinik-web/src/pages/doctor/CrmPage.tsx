@@ -46,15 +46,15 @@ const WEEK_BD: { name: string; daysUntil: number; date: string }[] = [
 const TEMPLATES: Record<MsgTemplate, { label: string; text: string }> = {
   birthday: {
     label: 'Doğum Günü',
-    text:  'Sayın {hastaAdı}, doğum gününüzü içtenlikle kutlarız! 🎂 Size özel %15 indirim fırsatı sunuyoruz. İyi ki doğdunuz! — BulutKlinik',
+    text:  'Sayın {hastaAdı}, doğum gününüzü içtenlikle kutlarız! 🎂 Size özel %15 indirim fırsatı sunuyoruz. İyi ki doğdunuz! — Medica.AI',
   },
   winback: {
     label: 'Geri Kazan',
-    text:  'Sayın {hastaAdı}, sizi özledik! Son ziyaretinizden bu yana {gün} gün geçti. Yeni tedavi seçeneklerimizi keşfetmek için randevu alın. — BulutKlinik',
+    text:  'Sayın {hastaAdı}, sizi özledik! Son ziyaretinizden bu yana {gün} gün geçti. Yeni tedavi seçeneklerimizi keşfetmek için randevu alın. — Medica.AI',
   },
   vip: {
     label: 'VIP Teklif',
-    text:  'Sayın {hastaAdı}, değerli hastamız olarak size özel bir teklif sunmak istiyoruz. Detaylar için lütfen bizi arayın. — BulutKlinik',
+    text:  'Sayın {hastaAdı}, değerli hastamız olarak size özel bir teklif sunmak istiyoruz. Detaylar için lütfen bizi arayın. — Medica.AI',
   },
   custom: {
     label: 'Özel Mesaj',
@@ -81,7 +81,7 @@ function saveLog(log: CrmLog) {
 export default function CrmPage() {
   const { userId } = useAuthStore()
 
-  useEffect(() => { document.title = 'Hasta CRM – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Hasta CRM – Medica.AI' }, [])
 
   const { data: allApts = [] } = useQuery({
     queryKey: ['doctor-appointments', userId],

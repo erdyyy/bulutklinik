@@ -30,7 +30,7 @@ export default function StockPage() {
     name: '', unit: '', currentQuantity: '', minimumQuantity: '', unitCost: '', category: '',
   })
 
-  useEffect(() => { document.title = 'Stok Yönetimi – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Stok Yönetimi – Medica.AI' }, [])
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['stock'],

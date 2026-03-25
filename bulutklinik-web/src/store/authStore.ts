@@ -18,6 +18,6 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (token, role, userId) => set({ token, role, userId }),
       logout: () => set({ token: null, role: null, userId: null }),
     }),
-    { name: 'bulutklinik-auth' }
+    { name: 'medicaai-auth' }
   )
 )

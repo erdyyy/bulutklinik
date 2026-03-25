@@ -182,7 +182,7 @@ export default function IntegrationSettingsPage() {
           </div>
           <div className="p-6 space-y-4">
             <p className="text-sm text-gray-500">
-              Harici sistemlerin BulutKlinik API'ye erişmesi için bearer token.
+              Harici sistemlerin Medica.AI API'ye erişmesi için bearer token.
               <span className="font-medium text-gray-700"> Authorization: Bearer bk_live_...</span>
             </p>
 
@@ -459,7 +459,7 @@ def verify(payload: str, signature: str, secret: str) -> bool:
     ).hexdigest()
     return hmac.compare_digest(expected, signature)
 
-# Header: X-BulutKlinik-Signature`}</code>
+# Header: X-Medica.AI-Signature`}</code>
               </div>
 
               <a

@@ -1,16 +1,16 @@
 version: '3.9'
 
 ################################################################################
-# BulutKlinik — Production
+# MedicaAI — Production
 # Port tahsisi:  API → 8282  |  Web → 8083  |  AI → 8284
 ################################################################################
 
 services:
 
   # ── .NET 8 REST API ────────────────────────────────────────────────────── #
-  bulutklinik-api:
-    image: ${BULUTKLINIK_API_IMAGE:-ghcr.io/OWNER/bulutklinik-api:latest}
-    container_name: bulutklinik-api
+  medicaai-api:
+    image: ${BULUTKLINIK_API_IMAGE:-ghcr.io/OWNER/medicaai-api:latest}
+    container_name: medicaai-api
     environment:
       ASPNETCORE_ENVIRONMENT:     Production
       ASPNETCORE_URLS:            http://+:8080
@@ -21,36 +21,36 @@ services:
       # Netgsm SMS
       Netgsm__UserCode:  ${NETGSM_USER_CODE:-}
       Netgsm__Password:  ${NETGSM_PASSWORD:-}
-      Netgsm__Header:    ${NETGSM_HEADER:-BulutKlinik}
+      Netgsm__Header:    ${NETGSM_HEADER:-MedicaAI}
       Netgsm__Enabled:   ${NETGSM_ENABLED:-false}
       # SMTP Email
       Smtp__Host:        ${SMTP_HOST:-smtp.gmail.com}
       Smtp__Port:        ${SMTP_PORT:-587}
       Smtp__Username:    ${SMTP_USERNAME:-}
       Smtp__Password:    ${SMTP_PASSWORD:-}
-      Smtp__FromName:    BulutKlinik
+      Smtp__FromName:    MedicaAI
       Smtp__Enabled:     ${SMTP_ENABLED:-false}
     networks:
-      - bulutklinik_net
+      - medicaai_net
       - services_db       # postgres-db'ye erişim
     restart: unless-stopped
 
   # ── React Frontend (nginx) ─────────────────────────────────────────────── #
-  bulutklinik-web:
-    image: ${BULUTKLINIK_WEB_IMAGE:-ghcr.io/OWNER/bulutklinik-web:latest}
-    container_name: bulutklinik-web
+  medicaai-web:
+    image: ${BULUTKLINIK_WEB_IMAGE:-ghcr.io/OWNER/medicaai-web:latest}
+    container_name: medicaai-web
     depends_on:
-      - bulutklinik-api
+      - medicaai-api
     ports:
       - "8083:80"
     networks:
-      - bulutklinik_net
+      - medicaai_net
     restart: unless-stopped
 
   # ── Python AI Servisi ──────────────────────────────────────────────────── #
-  bulutklinik-ai:
-    image: ${BULUTKLINIK_AI_IMAGE:-ghcr.io/OWNER/bulutklinik-ai:latest}
-    container_name: bulutklinik-ai
+  medicaai-ai:
+    image: ${BULUTKLINIK_AI_IMAGE:-ghcr.io/OWNER/medicaai-ai:latest}
+    container_name: medicaai-ai
     environment:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       OPENAI_API_KEY:    ${OPENAI_API_KEY:-}
@@ -58,11 +58,11 @@ services:
     ports:
       - "8284:8001"
     networks:
-      - bulutklinik_net
+      - medicaai_net
     restart: unless-stopped
 
 networks:
-  bulutklinik_net:
+  medicaai_net:
     driver: bridge
 
   # Mevcut postgres-db container'ını içeren network

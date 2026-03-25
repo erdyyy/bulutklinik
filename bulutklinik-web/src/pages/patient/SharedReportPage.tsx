@@ -130,7 +130,7 @@ export default function SharedReportPage() {
         <p className="text-sm text-gray-500 leading-relaxed">{error}</p>
         <div className="flex items-center gap-2 justify-center text-xs text-gray-400 pt-2">
           <Shield size={12} />
-          <span>BulutKlinik — Güvenli Paylaşım</span>
+          <span>Medica.AI — Güvenli Paylaşım</span>
         </div>
       </div>
     </div>
@@ -155,7 +155,7 @@ export default function SharedReportPage() {
             <ScanFace className="text-white" size={18} />
           </div>
           <div>
-            <p className="font-bold text-gray-900 text-sm leading-none">BulutKlinik</p>
+            <p className="font-bold text-gray-900 text-sm leading-none">Medica.AI</p>
             <p className="text-[11px] text-gray-400 mt-0.5">Yüz Asimetri Analiz Raporu</p>
           </div>
           <div className="ml-auto flex items-center gap-1.5 text-xs text-gray-400">
@@ -246,7 +246,7 @@ export default function SharedReportPage() {
 
         <div className="flex items-center gap-2 justify-center text-xs text-gray-400 pb-4">
           <Shield size={12} />
-          <span>BulutKlinik Güvenli Paylaşım · Şifreli Bağlantı</span>
+          <span>Medica.AI Güvenli Paylaşım · Şifreli Bağlantı</span>
         </div>
       </div>
     </div>

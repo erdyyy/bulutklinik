@@ -68,7 +68,7 @@ const DEFAULT_PERMISSIONS: Record<Role, string[]> = {
 
 // ── Storage ────────────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = "bulutklinik_team_v1";
+const STORAGE_KEY = "medicaai_team_v1";
 
 function loadTeam(): TeamMember[] {
   try {

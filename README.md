@@ -1,4 +1,4 @@
-# BulutKlinik — Klinik Otomasyon API
+# Medica.AI — Klinik Otomasyon API
 
 ASP.NET Core 8 + PostgreSQL + React ile geliştirilmekte olan klinik otomasyon sistemi.
 
@@ -27,14 +27,14 @@ docker-compose up postgres redis -d
 
 ### 3. Migration uygula
 ```bash
-cd BulutKlinik.Infrastructure
-dotnet ef migrations add InitialCreate --startup-project ../BulutKlinik.API
-dotnet ef database update --startup-project ../BulutKlinik.API
+cd Medica.AI.Infrastructure
+dotnet ef migrations add InitialCreate --startup-project ../Medica.AI.API
+dotnet ef database update --startup-project ../Medica.AI.API
 ```
 
 ### 4. API'yi çalıştır
 ```bash
-cd BulutKlinik.API
+cd Medica.AI.API
 dotnet run
 # → http://localhost:5000/swagger
 ```
@@ -75,15 +75,15 @@ docker-compose up --build
 ## Proje Yapısı
 
 ```
-BulutKlinik/
-├── BulutKlinik.Core/          # Entity, DTO, Interface (bağımsız katman)
+Medica.AI/
+├── Medica.AI.Core/          # Entity, DTO, Interface (bağımsız katman)
 │   ├── Entities/
 │   ├── DTOs/
 │   └── Interfaces/
-├── BulutKlinik.Infrastructure/ # EF Core, Service implementasyonları
+├── Medica.AI.Infrastructure/ # EF Core, Service implementasyonları
 │   ├── Persistence/
 │   └── Services/
-├── BulutKlinik.API/           # Controller, Middleware, Program.cs
+├── Medica.AI.API/           # Controller, Middleware, Program.cs
 │   ├── Controllers/
 │   └── Middleware/
 └── docker-compose.yml

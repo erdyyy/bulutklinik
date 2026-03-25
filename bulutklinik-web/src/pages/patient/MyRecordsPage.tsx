@@ -10,7 +10,7 @@ dayjs.locale('tr')
 export default function MyRecordsPage() {
   const { userId } = useAuthStore()
 
-  useEffect(() => { document.title = 'Muayene Geçmişi – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Muayene Geçmişi – Medica.AI' }, [])
 
   const { data: records = [], isLoading } = useQuery({
     queryKey: ['my-records', userId],

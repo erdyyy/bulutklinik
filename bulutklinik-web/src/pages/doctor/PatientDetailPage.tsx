@@ -118,7 +118,7 @@ export default function PatientDetailPage() {
   const [journeyFilter, setJourneyFilter] = useState<JourneyFilter>('all')
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
 
-  useEffect(() => { document.title = 'Hasta Detayı – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Hasta Detayı – Medica.AI' }, [])
 
   const { data: records = [], isLoading: loadingRecords } = useQuery({
     queryKey: ['patient-records', patientId],

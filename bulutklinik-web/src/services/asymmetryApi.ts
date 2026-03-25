@@ -1,5 +1,5 @@
 /**
- * BulutKlinik AI Servis — asimetri analizi ve tedavi planı API client.
+ * Medica.AI AI Servis — asimetri analizi ve tedavi planı API client.
  * Base URL: http://localhost:8001/api/v1
  */
 

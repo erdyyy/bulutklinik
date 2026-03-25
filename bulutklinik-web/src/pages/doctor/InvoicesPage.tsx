@@ -57,7 +57,7 @@ export default function InvoicesPage() {
     expiresAt: dayjs().add(6, 'month').format('YYYY-MM-DD'), notes: '',
   })
 
-  useEffect(() => { document.title = 'Faturalar – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Faturalar – Medica.AI' }, [])
 
   const { data: invoices = [], isLoading } = useQuery({
     queryKey: ['invoices', patientIdFilter],

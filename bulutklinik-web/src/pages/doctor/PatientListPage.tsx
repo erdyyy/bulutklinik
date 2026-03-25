@@ -11,7 +11,7 @@ export default function PatientListPage() {
   const { userId } = useAuthStore()
   const [search, setSearch] = useState('')
 
-  useEffect(() => { document.title = 'Hastalarım – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Hastalarım – Medica.AI' }, [])
 
   const { data: appointments = [], isLoading } = useQuery({
     queryKey: ['doctor-appointments', userId],

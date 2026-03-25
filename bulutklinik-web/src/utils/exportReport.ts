@@ -4,7 +4,7 @@ const DISCLAIMER_TEXT =
   'Bu sistem tarafından üretilen AI analiz raporları, lisanslı bir hekimin değerlendirmesinin yerini alamaz. ' +
   'Raporlar yalnızca klinik karar desteği amacıyla üretilmekte olup kesin tanı veya tedavi önerisi niteliği taşımamaktadır. ' +
   'Hastanın bireysel anatomisi, tıbbi öyküsü ve hekim muayenesi her zaman önceliklidir. ' +
-  'BulutKlinik ve yazılım geliştiricileri, AI raporlarının klinik uygulamaya yansımasından doğabilecek sonuçlardan sorumlu tutulamaz.'
+  'Medica.AI ve yazılım geliştiricileri, AI raporlarının klinik uygulamaya yansımasından doğabilecek sonuçlardan sorumlu tutulamaz.'
 
 interface ReportSession {
   label:         string
@@ -148,7 +148,7 @@ export function exportReportAsPdf(
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>BulutKlinik — AI Analiz Raporu</title>
+  <title>Medica.AI — AI Analiz Raporu</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:system-ui,-apple-system,sans-serif;color:#111827;background:#fff;padding:0}
@@ -174,7 +174,7 @@ export function exportReportAsPdf(
     <!-- Header -->
     <header style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:3px solid #0d9488;">
       <div>
-        <h1 style="font-size:22px;font-weight:800;color:#0d9488;letter-spacing:-0.5px;">BulutKlinik</h1>
+        <h1 style="font-size:22px;font-weight:800;color:#0d9488;letter-spacing:-0.5px;">Medica.AI</h1>
         <p style="font-size:12px;color:#6b7280;margin-top:2px;">Estetik Klinik Yönetim Platformu</p>
         <p style="font-size:11px;color:#9ca3af;margin-top:6px;">AI Asimetri Analiz Raporu</p>
       </div>
@@ -243,7 +243,7 @@ export function exportReportAsPdf(
     <footer style="margin-top:40px;padding-top:20px;border-top:2px solid #fee2e2;background:#fff7f7;border-radius:10px;padding:16px 20px;">
       <p style="font-size:11px;font-weight:700;color:#b91c1c;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Yasal Sorumluluk Reddi</p>
       <p style="font-size:11px;color:#6b7280;line-height:1.7;">${DISCLAIMER_TEXT}</p>
-      <p style="font-size:10px;color:#9ca3af;margin-top:10px;">BulutKlinik &copy; ${new Date().getFullYear()} — Tüm hakları saklıdır.</p>
+      <p style="font-size:10px;color:#9ca3af;margin-top:10px;">Medica.AI &copy; ${new Date().getFullYear()} — Tüm hakları saklıdır.</p>
     </footer>
 
   </div>

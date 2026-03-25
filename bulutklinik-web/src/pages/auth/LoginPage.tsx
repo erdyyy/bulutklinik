@@ -31,7 +31,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="text-4xl mb-2">🏥</div>
-          <h1 className="text-2xl font-bold text-gray-800">BulutKlinik</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Medica.AI</h1>
           <p className="text-gray-500 text-sm mt-1">Hesabınıza giriş yapın</p>
         </div>
 
@@ -74,8 +74,8 @@ export default function LoginPage() {
 
         <div className="mt-6 p-4 bg-gray-50 rounded-lg text-xs text-gray-500 space-y-1">
           <p className="font-semibold text-gray-600">Test hesapları:</p>
-          <p>👨‍⚕️ Doktor: doktor@bulutklinik.com / Test1234</p>
-          <p>🧑‍💼 Hasta: hasta@bulutklinik.com / Test1234</p>
+          <p>👨‍⚕️ Doktor: doktor@medicaai.com / Test1234</p>
+          <p>🧑‍💼 Hasta: hasta@medicaai.com / Test1234</p>
         </div>
       </div>
     </div>

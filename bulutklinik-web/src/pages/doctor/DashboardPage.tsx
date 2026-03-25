@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const [revenueTab, setRevenueTab] = useState<RevenueTab>('Günlük')
   const [aiSessions, setAiSessions] = useState<AnalysisSession[]>([])
 
-  useEffect(() => { document.title = 'Dashboard – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Dashboard – Medica.AI' }, [])
   useEffect(() => { sessionsAll().then(setAiSessions).catch(() => {}) }, [])
 
   const { data: allApts = [], isLoading: loadingApts } = useQuery({

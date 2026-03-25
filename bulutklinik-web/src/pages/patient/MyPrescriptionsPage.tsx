@@ -41,7 +41,7 @@ export default function MyPrescriptionsPage() {
   const { userId } = useAuthStore()
   const [activeTab, setActiveTab] = useState<DocTab>('all')
 
-  useEffect(() => { document.title = 'Belgelerim – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Belgelerim – Medica.AI' }, [])
 
   const { data: docs = [], isLoading } = useQuery({
     queryKey: ['my-documents', userId],

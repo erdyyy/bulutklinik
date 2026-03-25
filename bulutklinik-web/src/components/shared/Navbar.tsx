@@ -14,7 +14,7 @@ export default function Navbar() {
     <nav className="bg-blue-600 text-white shadow-md">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="text-xl font-bold tracking-tight">
-          🏥 BulutKlinik
+          🏥 Medica.AI
         </Link>
         <div className="flex items-center gap-4 text-sm">
           {role === 'Doctor' && (

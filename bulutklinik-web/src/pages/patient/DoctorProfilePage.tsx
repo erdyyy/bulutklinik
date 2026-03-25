@@ -59,8 +59,8 @@ export default function DoctorProfilePage() {
   })
 
   useEffect(() => {
-    if (doctor) document.title = `${doctor.title} ${doctor.fullName} – BulutKlinik`
-    else document.title = 'Doktor Profili – BulutKlinik'
+    if (doctor) document.title = `${doctor.title} ${doctor.fullName} – Medica.AI`
+    else document.title = 'Doktor Profili – Medica.AI'
   }, [doctor])
 
   if (isLoading) return <PatientLayout title="Doktor Profili"><ProfileSkeleton /></PatientLayout>

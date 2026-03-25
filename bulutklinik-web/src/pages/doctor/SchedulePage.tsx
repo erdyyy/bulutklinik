@@ -25,7 +25,7 @@ export default function SchedulePage() {
   const [leaveDate, setLeaveDate] = useState(dayjs().add(1, 'day').format('YYYY-MM-DD'))
   const [successMsg, setSuccessMsg] = useState('')
 
-  useEffect(() => { document.title = 'Çalışma Saatleri – BulutKlinik' }, [])
+  useEffect(() => { document.title = 'Çalışma Saatleri – Medica.AI' }, [])
 
   const { data: schedules = [] } = useQuery({
     queryKey: ['schedules', userId],

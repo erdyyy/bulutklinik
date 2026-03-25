@@ -28,7 +28,7 @@ export default function PatientDashboardPage() {
   const { userId } = useAuthStore()
 
   useEffect(() => {
-    document.title = 'Ana Sayfa – BulutKlinik'
+    document.title = 'Ana Sayfa – Medica.AI'
   }, [])
 
   const { data: appointments = [], isLoading: loadingApts } = useQuery({
