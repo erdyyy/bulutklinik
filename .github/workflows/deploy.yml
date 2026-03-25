@@ -146,14 +146,14 @@ jobs:
 
             cd /root/medicaai
 
-            # Bu compose dışında portu tutan eski container varsa temizle
+            # Compose dışında portu tutan orphan container'ları temizle
             for port in 8083 8284; do
               docker ps -q --filter "publish=$port" | xargs -r docker stop 2>/dev/null || true
               docker ps -aq --filter "publish=$port" | xargs -r docker rm -f 2>/dev/null || true
             done
 
-            docker compose -f docker-compose.prod.yml down --remove-orphans
-            docker compose -f docker-compose.prod.yml up -d
+            # down değil force-recreate: volume/data korunur, sadece image güncellenir
+            docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
             docker logout ghcr.io
         env:
           GHCR_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
