@@ -6,7 +6,7 @@
 import axios from "axios";
 
 const aiApi = axios.create({
-  baseURL: "http://localhost:8001/api/v1",
+  baseURL: import.meta.env.VITE_AI_URL ?? "/ai/api/v1",
   timeout: 60_000,   // OpenCV + OpenAI birlikte ~30s sürebilir
 });
 
