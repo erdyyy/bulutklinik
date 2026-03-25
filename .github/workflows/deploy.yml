@@ -118,13 +118,26 @@ jobs:
           script: |
             set -e
 
-            # GHCR'a login (token workflow süresi boyunca geçerli)
+            # GHCR'a login
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_ACTOR" --password-stdin
 
-            # .env'deki image adlarını güncelle
-            sed -i "s|^BULUTKLINIK_API_IMAGE=.*|BULUTKLINIK_API_IMAGE=ghcr.io/${GHCR_OWNER}/medicaai-api:latest|" /root/medicaai/.env
-            sed -i "s|^BULUTKLINIK_WEB_IMAGE=.*|BULUTKLINIK_WEB_IMAGE=ghcr.io/${GHCR_OWNER}/medicaai-web:latest|" /root/medicaai/.env
-            sed -i "s|^BULUTKLINIK_AI_IMAGE=.*|BULUTKLINIK_AI_IMAGE=ghcr.io/${GHCR_OWNER}/medicaai-ai:latest|" /root/medicaai/.env
+            # Dizin ve .env dosyasını oluştur (ilk deploy'da yoksa)
+            mkdir -p /root/medicaai
+            touch /root/medicaai/.env
+
+            # Upsert: varsa güncelle, yoksa ekle
+            upsert_env() {
+              local key="$1" val="$2" file="/root/medicaai/.env"
+              if grep -q "^${key}=" "$file"; then
+                sed -i "s|^${key}=.*|${key}=${val}|" "$file"
+              else
+                echo "${key}=${val}" >> "$file"
+              fi
+            }
+
+            upsert_env BULUTKLINIK_API_IMAGE "ghcr.io/${GHCR_OWNER}/medicaai-api:latest"
+            upsert_env BULUTKLINIK_WEB_IMAGE "ghcr.io/${GHCR_OWNER}/medicaai-web:latest"
+            upsert_env BULUTKLINIK_AI_IMAGE  "ghcr.io/${GHCR_OWNER}/medicaai-ai:latest"
 
             docker pull ghcr.io/${GHCR_OWNER}/medicaai-api:latest
             docker pull ghcr.io/${GHCR_OWNER}/medicaai-web:latest
