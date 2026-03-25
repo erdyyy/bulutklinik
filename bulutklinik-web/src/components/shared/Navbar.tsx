@@ -33,6 +33,8 @@ export default function Navbar() {
               <Link to="/my-appointments" className="hover:underline">Randevularım</Link>
               <Link to="/my-records" className="hover:underline">Muayene Geçmişim</Link>
               <Link to="/my-measurements" className="hover:underline">Ölçümlerim</Link>
+              <Link to="/my-documents" className="hover:underline">Belgelerim</Link>
+              <Link to="/my-profile" className="hover:underline">Profilim</Link>
             </>
           )}
           <button

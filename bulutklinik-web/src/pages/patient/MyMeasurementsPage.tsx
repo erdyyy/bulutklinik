@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '../../store/authStore'
 import { medicalApi } from '../../services/medicalApi'
-import Navbar from '../../components/shared/Navbar'
+import PatientLayout from '../../components/patient/PatientLayout'
 import dayjs from 'dayjs'
 
 const MEASUREMENT_TYPES = ['BloodPressure', 'HeartRate', 'BloodSugar', 'Weight', 'Height', 'Temperature', 'OxygenSaturation']
@@ -50,19 +50,16 @@ export default function MyMeasurementsPage() {
     addMutation.mutate({ type: form.type, value: form.value, unit: form.unit })
   }
 
+  const addBtn = (
+    <button onClick={() => setShowForm(v => !v)} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-3 py-2 rounded-xl transition-colors">
+      + Ölçüm Ekle
+    </button>
+  )
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Ölçümlerim</h1>
-          <button
-            onClick={() => setShowForm(v => !v)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
-          >
-            + Ölçüm Ekle
-          </button>
-        </div>
+    <PatientLayout title="Ölçümlerim" action={addBtn}>
+      <div className="max-w-2xl">
+        <div className="mb-6" />
 
         {/* Ölçüm ekleme formu */}
         {showForm && (
@@ -169,6 +166,6 @@ export default function MyMeasurementsPage() {
           ))}
         </div>
       </div>
-    </div>
+    </PatientLayout>
   )
 }

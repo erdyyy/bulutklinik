@@ -74,6 +74,57 @@ namespace BulutKlinik.Infrastructure.Migrations
                     b.ToTable("Appointments");
                 });
 
+            modelBuilder.Entity("BulutKlinik.Core.Entities.ConsentRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConsentText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("DisclaimerRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DoctorName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("KvkkAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("MedicalAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PatientName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PatientPhone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TreatmentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.ToTable("ConsentRecords");
+                });
+
             modelBuilder.Entity("BulutKlinik.Core.Entities.Doctor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -442,6 +493,38 @@ namespace BulutKlinik.Infrastructure.Migrations
                     b.ToTable("Payments");
                 });
 
+            modelBuilder.Entity("BulutKlinik.Core.Entities.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("BulutKlinik.Core.Entities.Service", b =>
                 {
                     b.Property<Guid>("Id")
@@ -549,6 +632,126 @@ namespace BulutKlinik.Infrastructure.Migrations
                     b.ToTable("StockMovements");
                 });
 
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TeamMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PermissionsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.ToTable("TeamMembers");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TreatmentPackage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CompletedSessions")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PackageName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("PricePerPackage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SoldAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TotalSessions")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("TreatmentPackages");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TreatmentSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PackageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SessionNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageId");
+
+                    b.ToTable("TreatmentSessions");
+                });
+
             modelBuilder.Entity("BulutKlinik.Core.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -636,6 +839,17 @@ namespace BulutKlinik.Infrastructure.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.ConsentRecord", b =>
+                {
+                    b.HasOne("BulutKlinik.Core.Entities.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("BulutKlinik.Core.Entities.Doctor", b =>
@@ -796,6 +1010,17 @@ namespace BulutKlinik.Infrastructure.Migrations
                     b.Navigation("Invoice");
                 });
 
+            modelBuilder.Entity("BulutKlinik.Core.Entities.Review", b =>
+                {
+                    b.HasOne("BulutKlinik.Core.Entities.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
             modelBuilder.Entity("BulutKlinik.Core.Entities.StockMovement", b =>
                 {
                     b.HasOne("BulutKlinik.Core.Entities.StockItem", "StockItem")
@@ -805,6 +1030,47 @@ namespace BulutKlinik.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("StockItem");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TeamMember", b =>
+                {
+                    b.HasOne("BulutKlinik.Core.Entities.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TreatmentPackage", b =>
+                {
+                    b.HasOne("BulutKlinik.Core.Entities.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BulutKlinik.Core.Entities.User", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TreatmentSession", b =>
+                {
+                    b.HasOne("BulutKlinik.Core.Entities.TreatmentPackage", "Package")
+                        .WithMany("Sessions")
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Package");
                 });
 
             modelBuilder.Entity("BulutKlinik.Core.Entities.WorkingSchedule", b =>
@@ -837,6 +1103,11 @@ namespace BulutKlinik.Infrastructure.Migrations
             modelBuilder.Entity("BulutKlinik.Core.Entities.StockItem", b =>
                 {
                     b.Navigation("Movements");
+                });
+
+            modelBuilder.Entity("BulutKlinik.Core.Entities.TreatmentPackage", b =>
+                {
+                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("BulutKlinik.Core.Entities.User", b =>

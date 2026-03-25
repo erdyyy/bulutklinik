@@ -19,3 +19,9 @@ export const getDoctorAppointments = (doctorId: string) =>
 
 export const updateStatus = (id: string, status: string) =>
   api.patch(`/appointments/${id}/status`, { status }).then((r) => r.data)
+
+export const submitReview = (appointmentId: string, data: { rating: number; comment?: string }) =>
+  api.post(`/appointments/${appointmentId}/review`, data).then((r) => r.data)
+
+export const getReview = (appointmentId: string) =>
+  api.get(`/appointments/${appointmentId}/review`).then((r) => r.data)

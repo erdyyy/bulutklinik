@@ -50,6 +50,9 @@ builder.Services.AddScoped<IStockService,         StockService>();
 builder.Services.AddScoped<IDocumentService,      DocumentService>();
 builder.Services.AddScoped<INotificationService,  NotificationService>();
 builder.Services.AddScoped<IDashboardService,     DashboardService>();
+builder.Services.AddScoped<IPackageService,       PackageService>();
+builder.Services.AddScoped<IConsentService,       ConsentService>();
+builder.Services.AddScoped<ITeamService,          TeamService>();
 
 // ── Controllers ───────────────────────────────────────────────────
 builder.Services.AddControllers()

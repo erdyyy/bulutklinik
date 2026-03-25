@@ -9,4 +9,14 @@ export const patientApi = {
   uploadDocument: (patientId: string, data: object) =>
     api.post(`/patients/${patientId}/documents`, data).then(r => r.data),
   dashboard: () => api.get('/dashboard').then(r => r.data),
+
+  // Notifications
+  sendNotification: (data: object) =>
+    api.post('/notifications/send', data).then(r => r.data),
+  getNotifications: (patientId: string) =>
+    api.get(`/notifications?patientId=${patientId}`).then(r => r.data),
+
+  // Profile
+  getProfile: () => api.get('/me').then(r => r.data),
+  updateProfile: (data: object) => api.put('/me', data).then(r => r.data),
 }

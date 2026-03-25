@@ -30,6 +30,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     // Sprint 6 - Bildirim
     public DbSet<NotificationLog> NotificationLogs => Set<NotificationLog>();
 
+    // Değerlendirme
+    public DbSet<Review> Reviews => Set<Review>();
+
+    // Tedavi Paketi
+    public DbSet<TreatmentPackage> TreatmentPackages => Set<TreatmentPackage>();
+    public DbSet<TreatmentSession> TreatmentSessions => Set<TreatmentSession>();
+
+    // KVKK Rıza Formları
+    public DbSet<ConsentRecord> ConsentRecords => Set<ConsentRecord>();
+
+    // Ekip Yönetimi
+    public DbSet<TeamMember> TeamMembers => Set<TeamMember>();
+
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<User>(e =>
@@ -130,6 +143,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         mb.Entity<NotificationLog>(e =>
         {
             e.Property(n => n.Channel).HasConversion<string>();
+        });
+
+        mb.Entity<Review>(e =>
+        {
+            // Her randevu için en fazla 1 değerlendirme
+            e.HasIndex(r => r.AppointmentId).IsUnique();
+        });
+
+        mb.Entity<TreatmentPackage>(e =>
+        {
+            e.Property(p => p.PricePerPackage).HasColumnType("decimal(18,2)");
+        });
+
+        mb.Entity<TreatmentSession>(e =>
+        {
+            e.HasOne(s => s.Package)
+             .WithMany(p => p.Sessions)
+             .HasForeignKey(s => s.PackageId);
+        });
+
+        mb.Entity<TeamMember>(e =>
+        {
+            e.Property(m => m.Role).HasConversion<string>();
         });
     }
 }
