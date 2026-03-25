@@ -124,16 +124,16 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
 
     // Eski domain → yeni domain migration (varsa güncelle)
-    var oldDoctor = await db.Users.FirstOrDefaultAsync(u => u.Email == "doktor@bulutklinik.com");
-    if (oldDoctor != null) { oldDoctor.Email = "doktor@medica.ai"; await db.SaveChangesAsync(); }
-    var oldHasta = await db.Users.FirstOrDefaultAsync(u => u.Email == "hasta@bulutklinik.com");
-    if (oldHasta != null) { oldHasta.Email = "hasta@medica.ai"; await db.SaveChangesAsync(); }
+    var oldDoctor = await db.Users.FirstOrDefaultAsync(u => u.Email == "doktor@bulutklinik.com" || u.Email == "doktor@medica.ai");
+    if (oldDoctor != null) { oldDoctor.Email = "doktor@medicaai.com"; await db.SaveChangesAsync(); }
+    var oldHasta = await db.Users.FirstOrDefaultAsync(u => u.Email == "hasta@bulutklinik.com" || u.Email == "hasta@medica.ai");
+    if (oldHasta != null) { oldHasta.Email = "hasta@medicaai.com"; await db.SaveChangesAsync(); }
 
     // Test Doktor
-    if (!await db.Users.AnyAsync(u => u.Email == "doktor@medica.ai"))
+    if (!await db.Users.AnyAsync(u => u.Email == "doktor@medicaai.com"))
     {
         var res = await auth.RegisterAsync(new RegisterRequest(
-            Email:       "doktor@medica.ai",
+            Email:       "doktor@medicaai.com",
             Password:    "Test1234",
             PhoneNumber: "05001234567",
             Role:        "Doctor"
@@ -149,10 +149,10 @@ using (var scope = app.Services.CreateScope())
     }
 
     // Test Hasta
-    if (!await db.Users.AnyAsync(u => u.Email == "hasta@medica.ai"))
+    if (!await db.Users.AnyAsync(u => u.Email == "hasta@medicaai.com"))
     {
         await auth.RegisterAsync(new RegisterRequest(
-            Email:       "hasta@medica.ai",
+            Email:       "hasta@medicaai.com",
             Password:    "Test1234",
             PhoneNumber: "05009876543",
             Role:        "Patient"
