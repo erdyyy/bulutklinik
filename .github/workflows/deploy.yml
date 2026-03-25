@@ -114,7 +114,7 @@ jobs:
           host:     ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key:      ${{ secrets.VPS_SSH_KEY }}
-          envs:     GHCR_TOKEN,GHCR_ACTOR,GHCR_OWNER
+          envs:     GHCR_TOKEN,GHCR_ACTOR,GHCR_OWNER,DB_CONN,JWT_KEY,JWT_ISSUER
           script: |
             set -e
 
@@ -135,9 +135,12 @@ jobs:
               fi
             }
 
-            upsert_env BULUTKLINIK_API_IMAGE "ghcr.io/${GHCR_OWNER}/medicaai-api:latest"
-            upsert_env BULUTKLINIK_WEB_IMAGE "ghcr.io/${GHCR_OWNER}/medicaai-web:latest"
-            upsert_env BULUTKLINIK_AI_IMAGE  "ghcr.io/${GHCR_OWNER}/medicaai-ai:latest"
+            upsert_env BULUTKLINIK_API_IMAGE  "ghcr.io/${GHCR_OWNER}/medicaai-api:latest"
+            upsert_env BULUTKLINIK_WEB_IMAGE  "ghcr.io/${GHCR_OWNER}/medicaai-web:latest"
+            upsert_env BULUTKLINIK_AI_IMAGE   "ghcr.io/${GHCR_OWNER}/medicaai-ai:latest"
+            upsert_env BULUTKLINIK_DB_CONN    "$DB_CONN"
+            upsert_env BULUTKLINIK_JWT_KEY    "$JWT_KEY"
+            upsert_env BULUTKLINIK_JWT_ISSUER "$JWT_ISSUER"
 
             docker pull ghcr.io/${GHCR_OWNER}/medicaai-api:latest
             docker pull ghcr.io/${GHCR_OWNER}/medicaai-web:latest
@@ -148,6 +151,9 @@ jobs:
             docker compose -f docker-compose.prod.yml up -d
             docker logout ghcr.io
         env:
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_ACTOR: ${{ github.actor }}
-          GHCR_OWNER: ${{ needs.build-push.outputs.owner }}
+          GHCR_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+          GHCR_ACTOR:  ${{ github.actor }}
+          GHCR_OWNER:  ${{ needs.build-push.outputs.owner }}
+          DB_CONN:     ${{ secrets.DB_CONN }}
+          JWT_KEY:     ${{ secrets.JWT_KEY }}
+          JWT_ISSUER:  ${{ secrets.JWT_ISSUER }}
