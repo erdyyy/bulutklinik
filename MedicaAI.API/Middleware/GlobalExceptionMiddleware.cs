@@ -25,7 +25,7 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
             ArgumentException             => (HttpStatusCode.BadRequest, ex.Message),
             InvalidOperationException     => (HttpStatusCode.Conflict, ex.Message),
             KeyNotFoundException          => (HttpStatusCode.NotFound, ex.Message),
-            UnauthorizedAccessException   => (HttpStatusCode.Forbidden, ex.Message),
+            UnauthorizedAccessException   => (HttpStatusCode.Unauthorized, ex.Message),
             _                             => (HttpStatusCode.InternalServerError, "Beklenmeyen bir hata oluştu.")
         };
 
