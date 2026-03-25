@@ -7,7 +7,8 @@ import MyAppointmentsPage   from './pages/patient/MyAppointmentsPage'
 import BookAppointmentPage  from './pages/patient/BookAppointmentPage'
 import MyRecordsPage        from './pages/patient/MyRecordsPage'
 import MyMeasurementsPage   from './pages/patient/MyMeasurementsPage'
-import DashboardPage        from './pages/doctor/DashboardPage'
+import AsymmetryAnalysisPage from './pages/doctor/AsymmetryAnalysisPage'
+import DashboardPage         from './pages/doctor/DashboardPage'
 import CalendarPage         from './pages/doctor/CalendarPage'
 import SchedulePage         from './pages/doctor/SchedulePage'
 import PatientListPage      from './pages/doctor/PatientListPage'
@@ -63,6 +64,9 @@ export default function App() {
         } />
         <Route path="/doctor/stock" element={
           <ProtectedRoute role="Doctor"><StockPage /></ProtectedRoute>
+        } />
+        <Route path="/doctor/asymmetry" element={
+          <ProtectedRoute role="Doctor"><AsymmetryAnalysisPage /></ProtectedRoute>
         } />
 
         <Route path="*" element={<Navigate to="/" replace />} />

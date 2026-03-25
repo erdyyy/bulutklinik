@@ -36,5 +36,28 @@ services:
     ports:
       - "8080:8080"
 
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: bulutklinik_ai
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL:    postgresql+asyncpg://postgres:postgres@postgres:5432/bulutklinik_ai
+      OPENAI_API_KEY:  ${OPENAI_API_KEY:-}
+      OPENAI_MODEL:    gpt-4o
+      DEBUG:           "false"
+      UPLOAD_DIR:      uploads/photos
+      ANNOTATED_DIR:   uploads/annotated
+      JWT_SECRET:      BulutKlinik_Super_Secret_Key_Min32Chars_CHANGE_IN_PROD!!
+      CORS_ORIGINS:    '["http://localhost:5173","http://localhost:3000","http://localhost:8080"]'
+    ports:
+      - "8001:8001"
+    volumes:
+      - ai_uploads:/app/uploads
+
 volumes:
   pgdata:
+  ai_uploads:

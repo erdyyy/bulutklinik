@@ -25,6 +25,7 @@ export default function Navbar() {
               <Link to="/doctor/invoices" className="hover:underline">Faturalar</Link>
               <Link to="/doctor/stock" className="hover:underline">Stok</Link>
               <Link to="/doctor/schedule" className="hover:underline">Çalışma Saatleri</Link>
+              <Link to="/doctor/asymmetry" className="hover:underline font-medium text-yellow-200">AI Analiz</Link>
             </>
           )}
           {role === 'Patient' && (

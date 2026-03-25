@@ -5,6 +5,7 @@
       "name": "bulutklinik-web",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
+      "cwd": "bulutklinik-web",
       "port": 5173
     }
   ]
