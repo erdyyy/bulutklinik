@@ -7,7 +7,7 @@ public class Document
     public Guid? AppointmentId { get; set; }
     public string FileName { get; set; } = null!;
     public string FileType { get; set; } = null!;
-    public string FilePath { get; set; } = string.Empty;;
+    public string FilePath { get; set; } = string.Empty;
     public DocumentCategory Category { get; set; }
     public bool IsDeleted { get; set; } = false;
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
