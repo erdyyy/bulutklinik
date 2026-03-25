@@ -144,7 +144,8 @@ jobs:
             docker pull ghcr.io/${GHCR_OWNER}/medicaai-ai:latest
 
             cd /root/medicaai
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker-compose.prod.yml down --remove-orphans
+            docker compose -f docker-compose.prod.yml up -d
             docker logout ghcr.io
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
