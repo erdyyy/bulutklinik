@@ -145,6 +145,13 @@ jobs:
             docker pull ghcr.io/${GHCR_OWNER}/medicaai-ai:latest
 
             cd /root/medicaai
+
+            # Bu compose dışında portu tutan eski container varsa temizle
+            for port in 8083 8284; do
+              docker ps -q --filter "publish=$port" | xargs -r docker stop 2>/dev/null || true
+              docker ps -aq --filter "publish=$port" | xargs -r docker rm -f 2>/dev/null || true
+            done
+
             docker compose -f docker-compose.prod.yml down --remove-orphans
             docker compose -f docker-compose.prod.yml up -d
             docker logout ghcr.io
