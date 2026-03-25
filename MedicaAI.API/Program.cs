@@ -160,4 +160,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// ── Uploads klasörünü oluştur ────────────────────────────────────
+Directory.CreateDirectory("/app/uploads");
+
 app.Run();

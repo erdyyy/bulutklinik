@@ -10,7 +10,7 @@ namespace MedicaAI.API.Controllers;
 public class DocumentsController(IDocumentService svc) : ControllerBase
 {
     [HttpPost("api/patients/{patientId:guid}/documents")]
-    public async Task<IActionResult> Upload(Guid patientId, UploadDocumentRequest req) =>
+    public async Task<IActionResult> Upload(Guid patientId, [FromBody] UploadDocumentRequest req) =>
         Ok(await svc.UploadAsync(patientId, req));
 
     [HttpGet("api/patients/{patientId:guid}/documents")]
@@ -18,6 +18,9 @@ public class DocumentsController(IDocumentService svc) : ControllerBase
         Ok(await svc.GetByPatientAsync(patientId));
 
     [HttpGet("api/documents/{id:guid}/download")]
-    public async Task<IActionResult> Download(Guid id) =>
-        Ok(await svc.GetByIdAsync(id));
+    public async Task<IActionResult> Download(Guid id)
+    {
+        var result = await svc.DownloadFileAsync(id);
+        return File(result.Content, result.ContentType, result.FileName);
+    }
 }

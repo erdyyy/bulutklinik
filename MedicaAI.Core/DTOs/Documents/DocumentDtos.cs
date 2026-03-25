@@ -7,3 +7,4 @@ public record DocumentDto(
 public record UploadDocumentRequest(
     Guid? AppointmentId, string FileName, string FileType, string FileBase64, string Category
 );
+public record FileDownloadResult(byte[] Content, string ContentType, string FileName);

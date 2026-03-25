@@ -196,7 +196,7 @@ namespace MedicaAI.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FileBase64")
+                    b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("text");
 

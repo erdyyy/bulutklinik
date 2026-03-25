@@ -33,6 +33,8 @@ services:
     networks:
       - medicaai_net
       - services_db       # postgres-db'ye erişim
+    volumes:
+      - api_uploads:/app/uploads
     restart: unless-stopped
 
   # ── React Frontend (nginx) ─────────────────────────────────────────────── #
@@ -69,3 +71,6 @@ networks:
   services_db:
     external: true
     name: services_default
+
+volumes:
+  api_uploads:   # Yüklenen dosyalar — deploy'da korunur
