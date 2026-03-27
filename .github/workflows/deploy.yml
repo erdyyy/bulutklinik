@@ -9,7 +9,6 @@ jobs:
   # ── 1. .NET testleri ───────────────────────────────────────────────────── #
   test:
     name: .NET Tests
-    if: false   # geçici olarak devre dışı
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,13 +17,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - run: dotnet restore
-      - run: dotnet build --no-restore -c Release
-      - run: dotnet test --no-build -c Release --verbosity normal
+      - run: dotnet restore MedicaAI.sln
+      - run: dotnet build MedicaAI.sln --no-restore -c Release
+      - run: dotnet test MedicaAI.sln --no-build -c Release --verbosity minimal
 
   # ── 2. Docker image build & push → GHCR ───────────────────────────────── #
   build-push:
     name: Build & Push Images
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -98,7 +98,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Güncel docker-compose.prod.yml dosyasını VPS'e kopyala
+      # docker-compose.prod.yml dosyasını VPS'e kopyala
       - name: Copy compose file
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -114,48 +114,91 @@ jobs:
           host:     ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key:      ${{ secrets.VPS_SSH_KEY }}
-          envs:     GHCR_TOKEN,GHCR_ACTOR,GHCR_OWNER
+          # Tüm secret'ları env olarak ilet — VPS'te .env'e yazılacak
+          envs: >-
+            GHCR_TOKEN,GHCR_ACTOR,GHCR_OWNER,
+            DB_CONN,JWT_KEY,JWT_ISSUER,
+            GOOGLE_API_KEY,LLM_PROVIDER,GEMINI_MODEL,
+            ANTHROPIC_API_KEY,OPENAI_API_KEY,
+            NETGSM_USER_CODE,NETGSM_PASSWORD,NETGSM_HEADER,NETGSM_ENABLED,
+            SMTP_HOST,SMTP_PORT,SMTP_USERNAME,SMTP_PASSWORD,SMTP_ENABLED
           script: |
             set -e
+            OWNER="${GHCR_OWNER}"
+            DEPLOY_DIR="/root/medicaai"
+            ENV_FILE="${DEPLOY_DIR}/.env"
 
-            # GHCR'a login
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_ACTOR" --password-stdin
+            # GHCR login
+            echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_ACTOR}" --password-stdin
 
-            # Dizin ve .env dosyasını oluştur (ilk deploy'da yoksa)
-            mkdir -p /root/medicaai
-            touch /root/medicaai/.env
+            mkdir -p "${DEPLOY_DIR}"
 
-            # Upsert: varsa güncelle, yoksa ekle
-            upsert_env() {
-              local key="$1" val="$2" file="/root/medicaai/.env"
-              if grep -q "^${key}=" "$file"; then
-                sed -i "s|^${key}=.*|${key}=${val}|" "$file"
-              else
-                echo "${key}=${val}" >> "$file"
-              fi
-            }
+            # .env'i sıfırdan CI secret'larından üret (VPS'te elle bir şey bırakmaya gerek yok)
+            cat > "${ENV_FILE}" <<ENVEOF
+            BULUTKLINIK_API_IMAGE=ghcr.io/${OWNER}/medicaai-api:latest
+            BULUTKLINIK_WEB_IMAGE=ghcr.io/${OWNER}/medicaai-web:latest
+            BULUTKLINIK_AI_IMAGE=ghcr.io/${OWNER}/medicaai-ai:latest
+            BULUTKLINIK_DB_CONN=${DB_CONN}
+            BULUTKLINIK_JWT_KEY=${JWT_KEY}
+            BULUTKLINIK_JWT_ISSUER=${JWT_ISSUER}
+            LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+            GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+            GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+            ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+            OPENAI_API_KEY=${OPENAI_API_KEY:-}
+            NETGSM_USER_CODE=${NETGSM_USER_CODE:-}
+            NETGSM_PASSWORD=${NETGSM_PASSWORD:-}
+            NETGSM_HEADER=${NETGSM_HEADER:-MedicaAI}
+            NETGSM_ENABLED=${NETGSM_ENABLED:-false}
+            SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+            SMTP_PORT=${SMTP_PORT:-587}
+            SMTP_USERNAME=${SMTP_USERNAME:-}
+            SMTP_PASSWORD=${SMTP_PASSWORD:-}
+            SMTP_ENABLED=${SMTP_ENABLED:-false}
+            ENVEOF
 
-            # Sadece image tag'leri güncelle — DB/JWT gibi secret'lar VPS'te kalır
-            upsert_env BULUTKLINIK_API_IMAGE  "ghcr.io/${GHCR_OWNER}/medicaai-api:latest"
-            upsert_env BULUTKLINIK_WEB_IMAGE  "ghcr.io/${GHCR_OWNER}/medicaai-web:latest"
-            upsert_env BULUTKLINIK_AI_IMAGE   "ghcr.io/${GHCR_OWNER}/medicaai-ai:latest"
+            # Satır başı boşlukları temizle (heredoc indent artifact)
+            sed -i 's/^[[:space:]]*//' "${ENV_FILE}"
 
-            docker pull ghcr.io/${GHCR_OWNER}/medicaai-api:latest
-            docker pull ghcr.io/${GHCR_OWNER}/medicaai-web:latest
-            docker pull ghcr.io/${GHCR_OWNER}/medicaai-ai:latest
+            docker pull ghcr.io/${OWNER}/medicaai-api:latest
+            docker pull ghcr.io/${OWNER}/medicaai-web:latest
+            docker pull ghcr.io/${OWNER}/medicaai-ai:latest
 
-            cd /root/medicaai
+            cd "${DEPLOY_DIR}"
 
-            # Compose dışında portu tutan orphan container'ları temizle
+            # Portu tutan orphan container'ları temizle
             for port in 8083 8284; do
-              docker ps -q --filter "publish=$port" | xargs -r docker stop 2>/dev/null || true
-              docker ps -aq --filter "publish=$port" | xargs -r docker rm -f 2>/dev/null || true
+              docker ps -q --filter "publish=${port}" | xargs -r docker stop 2>/dev/null || true
+              docker ps -aq --filter "publish=${port}" | xargs -r docker rm -f 2>/dev/null || true
             done
 
-            # down değil force-recreate: volume/data korunur, sadece image güncellenir
             docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
             docker logout ghcr.io
+
+            echo "=== Deploy tamamlandi ==="
+            docker ps --format 'table {{.Names}}\t{{.Status}}' | grep medicaai
         env:
-          GHCR_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-          GHCR_ACTOR:  ${{ github.actor }}
-          GHCR_OWNER:  ${{ needs.build-push.outputs.owner }}
+          GHCR_TOKEN:        ${{ secrets.GITHUB_TOKEN }}
+          GHCR_ACTOR:        ${{ github.actor }}
+          GHCR_OWNER:        ${{ needs.build-push.outputs.owner }}
+          # Veritabanı & Auth
+          DB_CONN:           ${{ secrets.DB_CONN }}
+          JWT_KEY:           ${{ secrets.JWT_KEY }}
+          JWT_ISSUER:        ${{ secrets.JWT_ISSUER }}
+          # AI Provider
+          LLM_PROVIDER:      ${{ secrets.LLM_PROVIDER }}
+          GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
+          GEMINI_MODEL:      ${{ secrets.GEMINI_MODEL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
+          # SMS (opsiyonel)
+          NETGSM_USER_CODE:  ${{ secrets.NETGSM_USER_CODE }}
+          NETGSM_PASSWORD:   ${{ secrets.NETGSM_PASSWORD }}
+          NETGSM_HEADER:     ${{ secrets.NETGSM_HEADER }}
+          NETGSM_ENABLED:    ${{ vars.NETGSM_ENABLED }}
+          # SMTP (opsiyonel)
+          SMTP_HOST:         ${{ secrets.SMTP_HOST }}
+          SMTP_PORT:         ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME:     ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD:     ${{ secrets.SMTP_PASSWORD }}
+          SMTP_ENABLED:      ${{ vars.SMTP_ENABLED }}

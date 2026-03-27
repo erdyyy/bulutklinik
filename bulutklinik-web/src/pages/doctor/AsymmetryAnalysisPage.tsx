@@ -946,16 +946,39 @@ const BOTOX_DB: Record<string, {
   ],
 };
 
+const isBotox = (treatment: string) =>
+  /botoks|botulinum|botox/i.test(treatment);
+
+const treatmentCategory = (treatment: string): "botoks" | "dolgu" | "prp" | "mezo" | "iplik" | "diger" => {
+  const t = treatment.toLowerCase();
+  if (/botoks|botulinum|botox/.test(t))                          return "botoks";
+  if (/dolgu|filler|hyaluronik|hyaluronic/.test(t))             return "dolgu";
+  if (/\bprp\b/.test(t))                                         return "prp";
+  if (/mezo/.test(t))                                            return "mezo";
+  if (/iplik|thread|pdo/.test(t))                               return "iplik";
+  return "diger";
+};
+
+const CATEGORY_META: Record<string, { label: string; icon: string; color: string; border: string }> = {
+  dolgu:  { label: "Dolgu / Filler",   icon: "💧", color: "text-blue-300",    border: "border-blue-700/40"   },
+  prp:    { label: "PRP",              icon: "🩸", color: "text-red-300",     border: "border-red-700/40"    },
+  mezo:   { label: "Mezoterapi",       icon: "💉", color: "text-purple-300",  border: "border-purple-700/40" },
+  iplik:  { label: "İplik / Thread",   icon: "🪡", color: "text-pink-300",    border: "border-pink-700/40"   },
+  diger:  { label: "Diğer Tedavi",     icon: "⚕️", color: "text-gray-300",    border: "border-gray-700/40"   },
+};
+
 type DoseRow = { id: string; region: string; muscle: string; units: number; min: number; max: number; bilateral: boolean; active: boolean };
 
 const BotoxDoseCalculator: React.FC<{
   recommendations: { treatment: string; region: string; priority: string; estimated_units?: string | null }[];
   asymmetryDelta?: { eyebrow: number; lip: number; midline: number };
 }> = ({ recommendations, asymmetryDelta }) => {
+  const botoxRecs = recommendations.filter(r => isBotox(r.treatment));
+
   const [rows, setRows] = useState<DoseRow[]>(() => {
     const seen = new Set<string>();
     const out: DoseRow[] = [];
-    recommendations.forEach(rec => {
+    botoxRecs.forEach(rec => {
       const muscles = BOTOX_DB[rec.region] ?? [];
       muscles.forEach(m => {
         const id = `${rec.region}-${m.muscleEN}`;
@@ -973,13 +996,6 @@ const BotoxDoseCalculator: React.FC<{
         });
       });
     });
-    // Bölge yoksa temel set ekle
-    if (out.length === 0) {
-      out.push(
-        { id: "eyebrow-Corrugator", region: "eyebrow", muscle: "Corrugator Supercilii", units: 12, min: 5, max: 25, bilateral: true,  active: true },
-        { id: "forehead-Frontalis", region: "forehead", muscle: "Frontalis",            units: 15, min: 10, max: 30, bilateral: false, active: true },
-      );
-    }
     return out;
   });
   const [patientWeight, setPatientWeight] = useState<number>(65);
@@ -998,6 +1014,15 @@ const BotoxDoseCalculator: React.FC<{
     eyebrow: "Kaş", forehead: "Alın", eye: "Göz Çevresi",
     nose: "Burun", lip: "Dudak", cheek: "Yanak", jaw: "Çene/Masseter",
   };
+
+  if (botoxRecs.length === 0) {
+    return (
+      <div className="p-6 text-center text-gray-500 text-sm">
+        Bu analiz için AI botoks önerisi bulunmuyor.<br />
+        <span className="text-xs text-gray-600">Dolgu, PRP ve diğer tedaviler aşağıda ayrıca gösterilmektedir.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 space-y-4">
@@ -2265,14 +2290,49 @@ const AsymmetryAnalysisPage: React.FC = () => {
 
               {/* ── Doz Hesaplama tab içeriği ── */}
               {planTab === "doz" && (
-                <BotoxDoseCalculator
-                  recommendations={plan.recommendations}
-                  asymmetryDelta={result ? {
-                    eyebrow: result.eyebrow_delta_mm,
-                    lip:     result.lip_delta_mm,
-                    midline: result.midline_deviation_mm,
-                  } : undefined}
-                />
+                <div className="space-y-4">
+                  {/* Botoks doz hesaplayıcı — sadece botoks önerileri */}
+                  <BotoxDoseCalculator
+                    recommendations={plan.recommendations}
+                    asymmetryDelta={result ? {
+                      eyebrow: result.eyebrow_delta_mm,
+                      lip:     result.lip_delta_mm,
+                      midline: result.midline_deviation_mm,
+                    } : undefined}
+                  />
+
+                  {/* Botoks dışı tedaviler — AI'ın kendi estimated_units değeriyle */}
+                  {(["dolgu","prp","mezo","iplik","diger"] as const).map(cat => {
+                    const recs = plan.recommendations.filter(r => treatmentCategory(r.treatment) === cat);
+                    if (recs.length === 0) return null;
+                    const meta = CATEGORY_META[cat];
+                    return (
+                      <div key={cat} className={`rounded-xl border ${meta.border} bg-gray-800/40 p-4 space-y-2`}>
+                        <p className={`text-sm font-semibold ${meta.color}`}>
+                          {meta.icon} {meta.label}
+                        </p>
+                        {recs.map((r, i) => (
+                          <div key={i} className="flex items-start justify-between gap-3 bg-gray-900/40 rounded-lg px-3 py-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-gray-200 leading-tight">{r.treatment}</p>
+                              <p className="text-[11px] text-gray-500 mt-0.5 capitalize">{r.region}</p>
+                              {r.notes && (
+                                <p className="text-[11px] text-gray-400 mt-1 italic">{r.notes}</p>
+                              )}
+                            </div>
+                            {r.estimated_units ? (
+                              <span className={`text-xs font-bold font-mono ${meta.color} whitespace-nowrap`}>
+                                {r.estimated_units}
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-gray-600 whitespace-nowrap">Doz belirtilmedi</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
               )}
 
             </div>
