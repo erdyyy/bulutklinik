@@ -20,6 +20,7 @@ import {
   generateTreatmentPlan,
   NasalMetrics,
   RegionalFinding,
+  simulateTreatment,
   TreatmentPin,
   TreatmentPlanResponse,
   uploadPhoto,
@@ -1385,6 +1386,11 @@ const AsymmetryAnalysisPage: React.FC = () => {
   const [afterResult,    setAfterResult]    = useState<AsymmetryResult | null>(null);
   const [isAnalyzingAfter, setIsAnalyzingAfter] = useState(false);
 
+  // ── Replicate simülasyon ── //
+  const [simImage,       setSimImage]       = useState<string | null>(null);
+  const [isSimulating,   setIsSimulating]   = useState(false);
+  const [simError,       setSimError]       = useState<string | null>(null);
+
   // ── Seans geçmişi ────────────────────────────────────────────────────── //
   const [isHistoryOpen,     setIsHistoryOpen]     = useState(false);
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
@@ -1603,6 +1609,27 @@ const AsymmetryAnalysisPage: React.FC = () => {
     runAfterAnalysis(file);
   };
 
+  // ── Simülasyon ───────────────────────────────────────────────────────── //
+  const handleSimulate = async () => {
+    if (!result || !plan) return;
+    setIsSimulating(true);
+    setSimError(null);
+    setSimImage(null);
+    try {
+      const res = await simulateTreatment({
+        photoId:         result.photo_id,
+        recommendations: plan.recommendations,
+        strength:        0.45,
+      });
+      setSimImage(res.simulated_image_b64);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Simülasyon başarısız";
+      setSimError(msg);
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
   // ── Sıfırla ──────────────────────────────────────────────────────────── //
   const reset = () => {
     setStep("upload"); setResult(null); setPlan(null); setError(null);
@@ -1610,6 +1637,7 @@ const AsymmetryAnalysisPage: React.FC = () => {
     setBeforeFile(null); setBeforePreview(null);
     setProfilePreview(null); setProfileB64(null);
     setAfterPreview(null); setAfterResult(null);
+    setSimImage(null); setSimError(null);
     setPlanTab("rapor");
   };
 
@@ -2339,6 +2367,115 @@ const AsymmetryAnalysisPage: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/*  Tedavi Sonrası Simülasyon (Replicate)                             */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {plan && result && (
+        <div className="bg-gray-900 rounded-2xl border border-gray-800/60 overflow-hidden">
+          {/* Başlık */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800/60">
+            <div>
+              <p className="text-sm font-semibold text-gray-200">✨ Tedavi Sonrası Simülasyon</p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                AI önerilerine göre tahmini görsel — gerçek sonucu garanti etmez
+              </p>
+            </div>
+            {!simImage && (
+              <button
+                onClick={handleSimulate}
+                disabled={isSimulating}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50
+                           disabled:cursor-not-allowed text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors"
+              >
+                {isSimulating ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Simüle ediliyor…
+                  </>
+                ) : (
+                  <>✨ Simülasyon Oluştur</>
+                )}
+              </button>
+            )}
+            {simImage && (
+              <button
+                onClick={handleSimulate}
+                disabled={isSimulating}
+                className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                🔄 Yeniden Oluştur
+              </button>
+            )}
+          </div>
+
+          {/* İçerik */}
+          <div className="p-5">
+            {simError && (
+              <div className="bg-red-900/30 border border-red-700/40 rounded-xl p-3 text-sm text-red-300">
+                ⚠️ {simError}
+              </div>
+            )}
+
+            {isSimulating && !simImage && (
+              <div className="flex flex-col items-center gap-3 py-10 text-gray-500">
+                <div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-sm">Replicate görsel üretiyor… (~10–20 sn)</p>
+              </div>
+            )}
+
+            {simImage && (
+              <div className="grid grid-cols-2 gap-4">
+                {/* Orijinal */}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-gray-400 text-center">📷 Orijinal</p>
+                  {beforePreview ? (
+                    <img
+                      src={beforePreview}
+                      alt="Orijinal"
+                      className="w-full rounded-xl object-cover aspect-[3/4]"
+                    />
+                  ) : result.annotated_image_b64 ? (
+                    <img
+                      src={`data:image/jpeg;base64,${result.annotated_image_b64}`}
+                      alt="Orijinal"
+                      className="w-full rounded-xl object-cover aspect-[3/4]"
+                    />
+                  ) : null}
+                </div>
+
+                {/* Simülasyon */}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-violet-400 text-center">✨ Tahmini Sonuç</p>
+                  <img
+                    src={`data:image/jpeg;base64,${simImage}`}
+                    alt="Simülasyon"
+                    className="w-full rounded-xl object-cover aspect-[3/4]"
+                  />
+                </div>
+
+                {/* Uyarı */}
+                <div className="col-span-2 bg-amber-900/20 border border-amber-700/30 rounded-xl px-4 py-2.5">
+                  <p className="text-[11px] text-amber-400 text-center leading-relaxed">
+                    ⚠️ Bu görsel yapay zeka tarafından üretilmiş tahmini bir simülasyondur.
+                    Gerçek tedavi sonucunu garanti etmez. Klinik karar hekime aittir.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!simImage && !isSimulating && !simError && (
+              <div className="flex flex-col items-center gap-2 py-8 text-gray-600">
+                <p className="text-4xl">✨</p>
+                <p className="text-sm">
+                  Tedavi planı hazır — simülasyon oluşturmak için butona bas
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
 
     {/* ── Seans Geçmişi Drawer ─────────────────────────────────────────── */}

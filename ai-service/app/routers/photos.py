@@ -1,9 +1,10 @@
 """
 Photo & Analysis Router
 =======================
-POST /api/v1/photos/upload-photo          → dosya yükle, photo_id döner
-POST /api/v1/photos/analyze-asymmetry     → OpenCV analizi çalıştır
+POST /api/v1/photos/upload-photo            → dosya yükle, photo_id döner
+POST /api/v1/photos/analyze-asymmetry       → OpenCV analizi çalıştır
 POST /api/v1/photos/generate-treatment-plan → LLM klinik rapor (Claude/OpenAI/Gemini)
+POST /api/v1/photos/simulate-treatment      → Replicate ile tedavi sonrası simülasyon
 """
 
 import hashlib
@@ -16,8 +17,9 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from app.services.opencv_analyzer import FaceAsymmetryAnalyzer
-from app.services.ai_interpreter  import generate_clinical_report, get_active_provider
+from app.services.opencv_analyzer    import FaceAsymmetryAnalyzer
+from app.services.ai_interpreter     import generate_clinical_report, get_active_provider
+from app.services.replicate_simulator import simulate_treatment
 
 router           = APIRouter(prefix="/api/v1/photos", tags=["photos"])
 _store           = {}   # photo_id → {"data": bytes, "doctor_id": str}
@@ -366,3 +368,49 @@ async def generate_treatment_plan(body: TreatmentPlanRequest):
     except Exception:
         pass
     return plan_resp
+
+
+# ─── Tedavi Simülasyonu (Replicate) ───────────────────────────────────────────
+
+class SimulationRequest(BaseModel):
+    photo_id:        str
+    recommendations: list[dict]
+    strength:        float = 0.45   # 0.3 hafif – 0.6 belirgin
+
+
+class SimulationResponse(BaseModel):
+    simulated_image_b64: str        # saf base64, data URI prefix'i yok
+    prompt_used:         str
+
+
+@router.post("/simulate-treatment", response_model=SimulationResponse)
+async def simulate_treatment_endpoint(body: SimulationRequest):
+    """
+    Hastanın fotoğrafını tedavi önerilerine göre simüle eder.
+    Replicate flux-kontext-pro modeli kullanır.
+    """
+    entry = _store.get(body.photo_id)
+    if not entry:
+        raise HTTPException(status_code=404, detail="Fotoğraf bulunamadı. Önce upload yapın.")
+
+    import base64 as _b64
+    raw_bytes = entry["data"] if isinstance(entry, dict) else entry
+    image_b64 = _b64.b64encode(raw_bytes).decode("utf-8")
+
+    try:
+        result_b64 = await simulate_treatment(
+            image_b64       = image_b64,
+            recommendations = body.recommendations,
+            strength        = body.strength,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Replicate hatası: {str(exc)}")
+
+    if not result_b64:
+        raise HTTPException(status_code=502, detail="Simülasyon görsel üretemedi.")
+
+    from app.services.replicate_simulator import _build_prompt
+    return SimulationResponse(
+        simulated_image_b64 = result_b64,
+        prompt_used         = _build_prompt(body.recommendations),
+    )

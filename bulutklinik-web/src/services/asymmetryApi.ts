@@ -295,3 +295,23 @@ export const listInjectionPoints = async (analysisId: number): Promise<Injection
   const { data } = await aiApi.get<InjectionPoint[]>(`/analysis/${analysisId}/injection-points`);
   return data;
 };
+
+// ─── Tedavi Simülasyonu (Replicate) ──────────────────────────────────────── //
+
+export interface SimulationResponse {
+  simulated_image_b64: string;
+  prompt_used:         string;
+}
+
+export const simulateTreatment = async (params: {
+  photoId:         string;
+  recommendations: { treatment: string; region: string; priority: string; estimated_units?: string | null }[];
+  strength?:       number;
+}): Promise<SimulationResponse> => {
+  const { data } = await aiApi.post<SimulationResponse>("/photos/simulate-treatment", {
+    photo_id:        params.photoId,
+    recommendations: params.recommendations,
+    strength:        params.strength ?? 0.45,
+  });
+  return data;
+};
